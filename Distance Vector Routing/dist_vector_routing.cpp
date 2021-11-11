@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -34,19 +35,22 @@ void get_cost_matrix_from_user(int number_of_nodes)
 {
 
     // Please enter the cost matrix! If there is no edge, enter -1
-
+    cout << "Distance Vector Table (here -1 represents Infinity)" << endl;
     for (int i = 0; i < number_of_nodes; i++)
     {
         for (int j = 0; j < number_of_nodes; j++)
         {
             int cost_i_j;
             cin >> cost_i_j;
+            cout << cost_i_j << " ";
             if (cost_i_j == -1)
                 cost_matrix[i][j] = INF;
             else
                 cost_matrix[i][j] = cost_i_j;
         }
+        cout << endl;
     }
+    cout << endl;
 
     // Initialise the distance vectors, for feeding to the bellman-ford algorithm
     for (int i = 0; i < number_of_nodes; i++)
@@ -54,8 +58,10 @@ void get_cost_matrix_from_user(int number_of_nodes)
         cost_matrix[i][i] = 0;
         for (int j = 0; j < number_of_nodes; j++)
         {
-            if(cost_matrix[i][j] == INF) nodes[i].outgoing_link[j] = -1;
-            else nodes[i].outgoing_link[j] = j;
+            if (cost_matrix[i][j] == INF)
+                nodes[i].outgoing_link[j] = -1;
+            else
+                nodes[i].outgoing_link[j] = j;
             nodes[i].distance[j] = cost_matrix[i][j];
         }
     }
@@ -64,7 +70,7 @@ void get_cost_matrix_from_user(int number_of_nodes)
 void fill_routing_table(int number_of_nodes)
 {
 
-    int continue_flag = true;
+    bool continue_flag = true;
 
     while (continue_flag)
     {
@@ -95,18 +101,26 @@ void fill_routing_table(int number_of_nodes)
 
 void print_routing_table(int number_of_nodes)
 {
+    cout << "Distances in the routing table for various routers: " << endl
+         << endl;
 
-    cout << "Printing the routing table!" << endl;
+    vector<vector<string>> dist(number_of_nodes, vector<string>(number_of_nodes));
 
     for (int i = 0; i < number_of_nodes; i++)
     {
+        cout<<"-------------------------------------"<<endl;
         cout << "For Router " << i + 1 << endl;
-        for (int j = 0; j < number_of_nodes; j++)
+        cout<<"------------------------------------"<<endl;
+        
+        cout<<"To Node | Distance | Outgoing Link"<<endl;
+        
+        cout<<"------------------------------------"<<endl;
+
+
+        for(int j  = 0 ; j < number_of_nodes ; ++j)
         {
-            if (nodes[i].outgoing_link[j] == -1)
-                cout << "No path exists to " << j + 1 << "." << endl;
-            else
-                cout << "To node " << j + 1 << ". Distance is " << nodes[i].distance[j] << " from the outgoing link " << nodes[i].outgoing_link[j] + 1 << endl;
+            string value  = (nodes[i].distance[j] == INF) ? "inf   |    n/a" : " " + (to_string(nodes[i].distance[j])+ "    |     "+to_string(nodes[i].outgoing_link[j]));
+            cout<<"   "<< j+1 <<"    |    "<< value<< endl; 
         }
     }
 }
@@ -118,17 +132,19 @@ int main()
 
     int testcases = 0;
     cin >> testcases;
-    for(int i = 1; i <= testcases; i++)
+    for (int i = 1; i <= testcases; i++)
     {
         int number_of_nodes;
         // Please enter the number of nodes(less than 1000):
         cin >> number_of_nodes;
 
+        cout << "Testcase: " << i << endl;
         clear_cost_matrix(number_of_nodes);
         get_cost_matrix_from_user(number_of_nodes);
         fill_routing_table(number_of_nodes);
-        cout<<"Testcase - "<<i<<endl;
         print_routing_table(number_of_nodes);
-        cout<<"--------------------------------------------------"<<endl;
+        cout << "--------------------------------------------------" << endl;
+        usleep(3000000);
     }
+    cout << "-------------- END OF SIMULATIONS ----------------" << endl;
 }
